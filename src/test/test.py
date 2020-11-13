@@ -6,7 +6,7 @@
 #    By: charles <charles.cabergs@gmail.com>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/06/16 21:48:50 by charles           #+#    #+#              #
-#    Updated: 2020/10/15 08:50:05 by cacharle         ###   ########.fr        #
+#    Updated: 2020/11/13 09:01:18 by cacharle         ###   ########.fr        #
 #                                                                              #
 # ############################################################################ #
 
@@ -98,11 +98,13 @@ class Test:
         """ Capture the output (stdout and stderr)
             Capture the content of the watched files after the command is run
         """
+        # cmd = [*shell_cmd, self.cmd] if config.PROMPT is None else [shell_cmd[0]]
         # run the command in the sandbox
         process = subprocess.Popen(
             [*shell_cmd, self.cmd],
             stderr=subprocess.STDOUT,
             stdout=subprocess.PIPE,
+            stdin=subprocess.PIPE,
             cwd=config.SANDBOX_PATH,
             env={
                 'PATH': config.PATH_VARIABLE,
@@ -110,16 +112,22 @@ class Test:
                 **self.exports,
             },
         )
+
         # if self.signal is not None:
         #     time.sleep(0.1)
         #     process.send_signal(self.signal)
 
         # https://docs.python.org/3/library/subprocess.html#subprocess.Popen.communicate
         try:
-            stdout, _ = process.communicate(timeout=(self.timeout if not config.CHECK_LEAKS else 10))
+            # process_input = None
+            # if config.PROMPT is not None:
+            #     process_input = (self.cmd + "\n").encode()
+            stdout, _ = process.communicate(
+                timeout=(self.timeout if not config.CHECK_LEAKS else 10),
+                # input=process_input
+            )
         except subprocess.TimeoutExpired:
             process.kill()
-            # _, _ = process.communicate(timeout=2)
             return Captured.timeout()
         try:
             output = stdout.decode()

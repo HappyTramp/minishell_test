@@ -6,9 +6,11 @@
 #    By: charles <me@cacharle.xyz>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/11 12:16:25 by charles           #+#    #+#              #
-#    Updated: 2020/10/15 08:49:01 by cacharle         ###   ########.fr        #
+#    Updated: 2020/11/13 08:59:12 by cacharle         ###   ########.fr        #
 #                                                                              #
 # ############################################################################ #
+
+import re
 
 import config
 
@@ -21,17 +23,20 @@ class Captured:
            files_content: content of the files altered by the command
            is_timeout:    the command has timed out
         """
-        # if config.PROMPT_OBJECT is not None:
-        #     output = output.replace(config.PROMPT_OBJECT + "\n", "")
-        #     output = output.replace(config.PROMPT_OBJECT, "")
+        # if config.PROMPT is not None:
+        #     output = re.sub(config.PROMPT, "", output)
+        #     output = '\n'.join([l for l in output.split('\n') if l != 'exit']) + "\n"
+
         lines = output.split('\n')
         for i, l in enumerate(lines):
-            # if l.find(config.PROMPT_OBJECT) == 0:
-            #     l.replace(config.PROMPT_OBJECT, "")
             if l.find(config.REFERENCE_ERROR_BEGIN) == 0:
-                lines[i] = l.replace(config.REFERENCE_ERROR_BEGIN, config.MINISHELL_ERROR_BEGIN, 1)
+                lines[i] = l.replace(config.REFERENCE_ERROR_BEGIN,
+                                     config.MINISHELL_ERROR_BEGIN,
+                                     1)
             elif l.find(config.REFERENCE_PATH + ": ") == 0:
-                lines[i] = l.replace(config.REFERENCE_PATH + ": ", config.MINISHELL_ERROR_BEGIN, 1)
+                lines[i] = l.replace(config.REFERENCE_PATH + ": ",
+                                     config.MINISHELL_ERROR_BEGIN,
+                                     1)
 
         self.output = '\n'.join(lines)
 

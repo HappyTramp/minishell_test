@@ -6,7 +6,7 @@
 #    By: charles <charles.cabergs@gmail.com>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/07/15 18:24:19 by charles           #+#    #+#              #
-#    Updated: 2020/10/11 15:47:30 by cacharle         ###   ########.fr        #
+#    Updated: 2020/11/13 09:00:17 by cacharle         ###   ########.fr        #
 #                                                                              #
 # ############################################################################ #
 
@@ -21,11 +21,6 @@ import distutils.spawn
 # run the bonus tests
 # can be changed with `export MINISHELL_TEST_BONUS=yes` in your shell rc file.
 BONUS = False
-
-# Your prompt (string that will be ignored)
-# ./run -h to show the available format
-# Create a new issue if your type of prompt isn't supported
-PROMPT = None
 
 # minishell dir path
 MINISHELL_DIR = "../minishell"
@@ -104,8 +99,10 @@ VALGRIND_CMD = [
 # 0, 1, 2
 VERBOSE_LEVEL = 1
 
+PROMPT = None
+
 MINISHELL_ERROR_BEGIN = os.path.basename(MINISHELL_PATH) + ": "
-REFERENCE_ERROR_BEGIN = REFERENCE_PATH + ": line 0: "
+REFERENCE_ERROR_BEGIN = REFERENCE_PATH + (": line 0: " if PROMPT is None else ": line 1: ")
 
 TERM_COLS = shutil.get_terminal_size().columns
 if TERM_COLS < 40:
@@ -120,3 +117,8 @@ CHECK_LEAKS = False
 SHOW_RANGE = False
 
 RANGE = None
+
+# Your prompt (string that will be ignored)
+# ./run -h to show the available format
+# Create a new issue if your type of prompt isn't supported
+#PROMPT = "\033\[0;32m(/[^ ]*)+\033\[0m\$ "
